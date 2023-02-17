@@ -1,0 +1,29 @@
+#compdef pyenv
+
+function parse_help() {
+    typeset -gHA _PYENV_ARGS=()
+
+    pyenv help | pyenv help | tail -n +4 | head -n -3 | while read -r line; do
+        key=$(echo ${line%% *} | xargs echo -n)
+        value=$(echo ${line#* } | xargs echo -n)
+        _PYENV_ARGS[$key]=$value
+    done
+}
+
+[[ -v _PYENV_ARGS ]] || parse_help
+
+
+local -a subcommands=()
+local k; for k in ${(ko)_PYENV_ARGS}; do
+  subcommands+=( "$k\:'$_PYENV_ARGS[$k]'" )
+done
+
+local -A opt_args
+local -a opts=( -qS ' ' ) context line state state_descr
+_arguments -A '' -O opts : ":command:(( $subcommands ))" '*:: :->next'
+local ret=$?
+
+[[ $state == next ]] ||
+    return ret
+
+return $(( ret && ? ))

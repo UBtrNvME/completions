@@ -1,2 +1,2 @@
-# completions
-# completions
+# Custom Completions for compdef
+* pyenv
